@@ -3,17 +3,8 @@ MIDI.midi = null;  // グローバルMIDIAccessオブジェクト
 MIDI.outputSelect = null;
 MIDI.outputList = null;
 
-try{
-	if(navigator.requestMIDIAccess){
-		navigator.requestMIDIAccess({sysex:false}).then(onMIDISuccess, onMIDIFailure);
-	}else{
-		console.log( "お使いのブラウザはWeb MIDI APIに対応していません。Web MIDI APIを有効化したChromeを使用してください。" );
-	}
-}catch(e){
-	console.log( "お使いのブラウザはWeb MIDI APIに対応していません。Web MIDI APIを有効化したChromeを使用してください。" );
-}
 
-function onMIDISuccess( midiAccess ) {
+MIDI.onMIDISuccess = function(midiAccess) {
 	console.log( "MIDI ready!" );
 	MIDI.midi = midiAccess;
 	var outputCmb = document.getElementById("outputPort");
@@ -25,10 +16,14 @@ function onMIDISuccess( midiAccess ) {
 	}
 	document.getElementById("outCount").innerHTML = outLength;
 	
-	changeOutput();
+	MIDI.changeOutput();
 }
 
-function changeOutput(){
+MIDI.onMIDIFailure = function(msg) {
+	console.log("Failed to get MIDI access - " + msg );
+}
+
+MIDI.changeOutput = function() {
 	var outputCmb = document.getElementById("outputPort");
 	var selectIndex = outputCmb.selectedIndex;
 	var outLength = MIDI.outputList.length;
@@ -43,12 +38,7 @@ function changeOutput(){
 	}
 }
 
-function onMIDIFailure(msg) {
-	console.log("Failed to get MIDI access - " + msg );
-}
-
-
-function outputMIDIMessage(data0, data1, data2) {
+MIDI.outputMIDIMessage = function(data0, data1, data2) {
 	if (MIDI.outputSelect) {
 		try{
 			var data = [data0, data1, data2];
@@ -61,5 +51,21 @@ function outputMIDIMessage(data0, data1, data2) {
 		}
 	}
 }
+
+
+MIDI.init = function() {
+    try{
+        if(navigator.requestMIDIAccess){
+            navigator.requestMIDIAccess({sysex:false}).then(MIDI.onMIDISuccess, MIDI.onMIDIFailure);
+        }else{
+            console.log( "お使いのブラウザはWeb MIDI APIに対応していません。Web MIDI APIを有効化したChromeを使用してください。" );
+        }
+    }catch(e){
+        console.log( "お使いのブラウザはWeb MIDI APIに対応していません。Web MIDI APIを有効化したChromeを使用してください。" );
+    }
+}
+
+
+
 
 

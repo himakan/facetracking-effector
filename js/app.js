@@ -20,19 +20,19 @@ document.addEventListener("DOMContentLoaded", function() {
         
         if(e.z < 60){
             //effect on
-            outputMIDIMessage(176, 94, 127);
+            MIDI.outputMIDIMessage(176, 94, 127);
         }else{
             //effect off
-            outputMIDIMessage(176, 94, 0);
+            MIDI.outputMIDIMessage(176, 94, 0);
         }
 
-        outputMIDIMessage(176, 92, Math.max(Math.min(parseInt(z * 64), 127), 0));
-        outputMIDIMessage(176, 12, padX);
-        outputMIDIMessage(176, 13, padY);
+        MIDI.outputMIDIMessage(176, 92, Math.max(Math.min(parseInt(z * 64), 127), 0));
+        MIDI.outputMIDIMessage(176, 12, padX);
+        MIDI.outputMIDIMessage(176, 13, padY);
         //for kaosspad3 -- end
     }, false);
 
-
+    MIDI.init();
     AudioPlayer.init();
     AudioPlayer.loadSound("sound/drumloop.wav", function() {
         AudioPlayer.loop(true);
