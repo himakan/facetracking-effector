@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body { background: black; margin: 0; padding: 0 }
+    #inputCanvas, #inputVideo { display: none: }
+    #selector { position: absolute; top: 5px; left: 5px; color: white; z-index:9999; }
+  </style>
+  <div id="selector">
+    OUT - Count : <span id="outCount"></span><br>
+    <select name="outputPort" id="outputPort" size="1" onchange="changeOutput()" >
+      <option value="off">OFF</option>
+    </select>
+  </div>
+  <div id="visualizer"></div>
+  <canvas id="inputCanvas" width="320" height="240"></canvas>
+  <video id="inputVideo" autoplay loop></video>
+  <script src="js/headtrackr.min.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/audiosource.js"></script>
+  <script src="js/audioplayer.js"></script>
+  <script src="js/midi.js"></script>
+  <script src="js/app.js"></script>
+</html>
