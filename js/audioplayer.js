@@ -9,7 +9,8 @@ AudioPlayer.QUAL_MUL = 30;
 
 AudioPlayer.init = function() {
   try {
-    AudioPlayer.context = new webkitAudioContext();
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    AudioPlayer.context = new AudioContext();
   }
   catch(e) {
     alert('Web Audio API is not supported in this browser');
