@@ -6,7 +6,7 @@
  *
  * The MicrophoneAudioSource uses the getUserMedia interface to get real-time data from the user's microphone. Not used currently but included for possible future use.
  */
-var AudioSource = function(audioCtx) {
+var AudioSource = function(audioPlayer) {
     var self = this;
     this.volume = 0;
     this.streamData = new Uint8Array(128);
@@ -22,8 +22,9 @@ var AudioSource = function(audioCtx) {
         self.volume = total;
     };
 
-    analyser = audioCtx.createAnalyser();
+    analyser = audioPlayer.context.createAnalyser();
     analyser.fftSize = 256;
-    AudioPlayer.source.connect(analyser);
+
+    audioPlayer.source.connect(analyser);
     setInterval(sampleAudioStream, 20);
 };

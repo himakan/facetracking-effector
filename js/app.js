@@ -33,12 +33,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }, false);
 
     MIDI.init();
-    AudioPlayer.init();
-    AudioPlayer.loadSound("sound/drumloop.wav", function() {
-        AudioPlayer.loop(true);
-        AudioPlayer.playSound();
+    var audioPlayer = new AudioPlayer();
+    audioPlayer.loadSound("sound/drumloop.wav", function() {
+        audioPlayer.loop(true);
+        audioPlayer.playSound();
 
-        var audioSource = new AudioSource(AudioPlayer.context);
+        var audioSource = new AudioSource(audioPlayer);
+
         visualizer = new Visualizer();
         visualizer.init({
             containerId: 'visualizer',
