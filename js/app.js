@@ -22,10 +22,10 @@ jQuery(function($) {
         var padX = Math.max(Math.min(parseInt((e.x + 10) / 20 * 127), 127), 0);
         var padY = Math.max(Math.min(parseInt((e.y + 10) / 20 * 127), 127), 0);
         
-        if(e.z < 60){
+        if (e.z < 60) {
             //effect on
             MIDI.outputMIDIMessage(176, 94, 127);
-        }else{
+        } else {
             //effect off
             MIDI.outputMIDIMessage(176, 94, 0);
         }
