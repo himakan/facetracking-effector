@@ -7,6 +7,7 @@ var AudioPlayer = function() {
 
 AudioPlayer.FREQ_MUL = 20000;
 AudioPlayer.QUAL_MUL = 30;
+AudioPlayer.SOUNDCLOUD_CLIENT_ID = "18f619af9811f21a70989becfe036e5a";
 
 AudioPlayer.prototype.init = function() {
     this.context = null;
@@ -21,7 +22,23 @@ AudioPlayer.prototype.init = function() {
     catch(e) {
         alert('Web Audio API is not supported in this browser');
     }
-}
+};
+
+AudioPlayer.prototype.loadSoundCloud = function(trackId, callback) {
+    var audio = new Audio();
+    var url = "http://api.soundcloud.com/tracks/"+trackId+"/stream" +
+              "?client_id="+AudioPlayer.SOUNDCLOUD_CLIENT_ID;
+    audio.src = url;
+    var context = this.context;
+    var source = context.createMediaElementSource(audio);
+    source.connect(context.destination);
+    this.source = source;
+    this.filter = this.context.createBiquadFilter();
+    this.filter.frequency.value = AudioPlayer.FREQ_MUL;
+    this.filter.connect(this.context.destination);
+    this.source.connect(this.filter);
+    callback(this.audioBuffer);
+};
 
 AudioPlayer.prototype.loadSound = function(url, callback) {
     var request = new XMLHttpRequest();
@@ -50,7 +67,11 @@ AudioPlayer.prototype.loop = function(isLoop) {
         console.log('context is undefined');
         return;
     }
-    this.source.loop = isLoop;
+    if (this.source instanceof AudioBufferSourceNode) {
+        this.source.loop = isLoop;
+    } else if (this.source instanceof MediaElementAudioSourceNode) {
+        this.source.mediaElement.loop = isLoop;
+    }
 };
 
 AudioPlayer.prototype.playSound = function() {
@@ -58,7 +79,23 @@ AudioPlayer.prototype.playSound = function() {
         console.log('source is undefined');
         return;
     }
-    this.source.start(0);
+    if (this.source instanceof AudioBufferSourceNode) {
+        this.source.start(0);
+    } else if (this.source instanceof MediaElementAudioSourceNode) {
+        this.source.mediaElement.play();
+    }
+};
+
+AudioPlayer.prototype.stopSound = function() {
+    if (!this.source) {
+        console.log('source is undefined');
+        return;
+    }
+    if (this.source instanceof AudioBufferSourceNode) {
+        this.source.stop(0);
+    } else if (this.source instanceof MediaElementAudioSourceNode) {
+        this.source.mediaElement.pause();
+    }
 };
 
 AudioPlayer.prototype.playbackRate = function(rate) {

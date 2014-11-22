@@ -1,6 +1,8 @@
-document.addEventListener("DOMContentLoaded", function() {
+jQuery(function($) {
 
-    var visualizer;
+    var visualizer, audioPlayer;
+
+    $("#soundcloud-play").on("click", fetchSoundCloundData);
 
     document.addEventListener("headtrackingEvent", function(e) {
         if (visualizer) {
@@ -10,8 +12,10 @@ document.addEventListener("DOMContentLoaded", function() {
         var x = Math.max(Math.min(((e.x + 10) / 20), 1), 0);
         var y = Math.max(Math.min(((e.y + 10) / 20), 1), 0);
         var z = Math.max(2 - (e.z - 50) / 30, 0);
-        AudioPlayer.lowPassFilter(x, y);
-        AudioPlayer.playbackRate(z);
+        if (audioPlayer) {
+            audioPlayer.lowPassFilter(x, y);
+            audioPlayer.playbackRate(z);
+        }
 
         //for kaosspad3
         //console.log("e.z: " + e.z);
@@ -32,24 +36,51 @@ document.addEventListener("DOMContentLoaded", function() {
         //for kaosspad3 -- end
     }, false);
 
-    MIDI.init();
-    var audioPlayer = new AudioPlayer();
-    audioPlayer.loadSound("sound/drumloop.wav", function() {
-        audioPlayer.loop(true);
-        audioPlayer.playSound();
+    function playSoundClound(soundCloudId) {
+        if (!audioPlayer) {
+            return;
+        }
+        audioPlayer.stopSound();
+        audioPlayer.loadSoundCloud(soundCloudId, function() {
+        // audioPlayer.loadSound("sound/drumloop.wav", function() {
+            audioPlayer.loop(true);
+            audioPlayer.playSound();
 
-        var audioSource = new AudioSource(audioPlayer);
+            var audioSource = new AudioSource(audioPlayer);
 
-        visualizer = new Visualizer();
-        visualizer.init({
-            containerId: 'visualizer',
-            audioSource: audioSource
+            visualizer = new Visualizer();
+            visualizer.init({
+                containerId: 'visualizer',
+                audioSource: audioSource
+            });
+            var videoInput = document.getElementById('inputVideo');
+            var canvasInput = document.getElementById('inputCanvas');
+            var htracker = new headtrackr.Tracker();
+            htracker.init(videoInput, canvasInput);
+            htracker.start();
         });
-        var videoInput = document.getElementById('inputVideo');
-        var canvasInput = document.getElementById('inputCanvas');
-        var htracker = new headtrackr.Tracker();
-        htracker.init(videoInput, canvasInput);
-        htracker.start();
-    });
+    }
+    
+    function fetchSoundCloundData() {
+        var url = $("#soundcloud-url").val();
+        $.ajax({
+            dataType: "json",
+            url: "//api.soundcloud.com/resolve.json",
+            data: {
+                client_id : AudioPlayer.SOUNDCLOUD_CLIENT_ID,
+                url: url
+            },
+            success: function(data) {
+                if (data.kind !== "track") {
+                    alert("This is not Track URL!");
+                    return;
+                }
+                playSoundClound(data.id);
+            }
+        });
+    }
 
+    MIDI.init();
+    audioPlayer = new AudioPlayer();
+    fetchSoundCloundData();
 });
