@@ -103,7 +103,11 @@ AudioPlayer.prototype.playbackRate = function(rate) {
         console.log('source is undefined');
         return;
     }
-    this.source.playbackRate.value = rate;
+    if (this.source instanceof AudioBufferSourceNode) {
+        this.source.playbackRate.value = rate;
+    } else if (this.source instanceof MediaElementAudioSourceNode) {
+        this.source.mediaElement.playbackRate = rate;
+    }
 };
 
 AudioPlayer.prototype.lowPassFilter = function(freq, qual) {
