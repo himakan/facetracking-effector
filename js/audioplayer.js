@@ -26,7 +26,7 @@ AudioPlayer.prototype.init = function() {
 
 AudioPlayer.prototype.loadSoundCloud = function(trackId, callback) {
     var audio = new Audio();
-    var url = "http://api.soundcloud.com/tracks/"+trackId+"/stream" +
+    var url = "//api.soundcloud.com/tracks/"+trackId+"/stream" +
               "?client_id="+AudioPlayer.SOUNDCLOUD_CLIENT_ID;
     audio.src = url;
     var context = this.context;
