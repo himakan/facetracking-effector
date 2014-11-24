@@ -10,8 +10,9 @@ MIDI.onMIDISuccess = function(midiAccess) {
 	var outputCmb = document.getElementById("outputPort");
 	var outLength = MIDI.midi.outputs().length;
 	MIDI.outputList = MIDI.midi.outputs();
-	for ( var i = 0; i < outLength; i++ ) {
-		var output = MIDI.midi.outputs()[i];
+	for ( var output in MIDI.midi.outputs.values() ) {
+        console.log(ouput);
+		// var output = MIDI.midi.outputs()[i];
 		outputCmb.appendChild(new Option(output.manufacturer + " " + output.name, output.id ))
 	}
 	document.getElementById("outCount").innerHTML = outLength;
